@@ -1,0 +1,4 @@
+AI in Transportation
+AI technology is driving innovation in transportation, particularly with the development of autonomous vehicles. Self-driving cars use AI to process sensor data and navigate complex environments safely. AI also helps optimize traffic flow in cities by analyzing real-time data to reduce congestion and emissions.
+
+Besides cars, AI is improving public transit systems and logistics by enhancing route planning and maintenance schedules, contributing to more sustainable and efficient transportation networks.

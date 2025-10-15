@@ -1,0 +1,4 @@
+Understanding Machine Learning
+Machine learning is a subset of AI focused on developing algorithms that allow computers to learn from data. Unlike traditional programming, where explicit instructions are given, machine learning enables systems to improve performance by recognizing patterns and making predictions based on past experiences.
+
+There are different types of machine learning, such as supervised, unsupervised, and reinforcement learning. These methods help AI systems solve various problems, from image recognition to fraud detection.

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ doc.title }}</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      margin: 40px auto;
+      max-width: 800px;
+      line-height: 1.7;
+      background-color: #f9f9f9;
+      color: #202124;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+
+    h1 {
+      color: #1a73e8;
+      font-size: 28px;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .content {
+      font-size: 16px;
+      color: #333;
+      white-space: pre-wrap; /* preserve line breaks */
+    }
+
+    a.back-link {
+      display: inline-block;
+      margin-bottom: 20px;
+      text-decoration: none;
+      color: #1a73e8;
+      font-size: 14px;
+    }
+
+    a.back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="{{ url_for('search') }}" class="back-link">&larr; Back to Search</a>
+    <h1>{{ doc.title }}</h1>
+    <div class="content">
+      {{ doc.content }}
+    </div>
+  </div>
+</body>
+</html>

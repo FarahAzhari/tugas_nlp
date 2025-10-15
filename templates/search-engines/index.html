@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document Search</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px;
+            background: #f4f6f8;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            padding: 10px 12px;
+            width: 400px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 16px;
+            border: none;
+            background: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 0 4px 4px 0;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .result:hover {
+            transform: translateY(-2px);
+        }
+        .title a {
+            font-weight: bold;
+            font-size: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .title a:hover {
+            text-decoration: underline;
+        }
+        .snippet {
+            margin-top: 8px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .similarity {
+            margin-top: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+        .no-results {
+            padding: 25px;
+            background: #fff3f3;
+            border: 1px solid #ffd6d6;
+            border-radius: 8px;
+            text-align: center;
+            color: #d9534f;
+        }
+        .no-results ul {
+            text-align: left;
+            margin: 10px auto 0;
+            display: inline-block;
+        }
+        .pagination {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.3s, color 0.3s;
+        }
+        .pagination a.active {
+            background: #007bff;
+            color: #fff;
+            border-color: #007bff;
+        }
+        .pagination a:hover {
+            background: #e9ecef;
+        }
+        @media (max-width: 500px) {
+            form {
+                flex-direction: column;
+                align-items: center;
+            }
+            input[type="text"] {
+                width: 100%;
+                margin-bottom: 10px;
+                border-radius: 4px;
+            }
+            button {
+                width: 100%;
+                border-radius: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>
+      <a href="{{ url_for('search') }}" style="text-decoration: none; color: inherit;">
+        Document Search
+      </a>
+    </h1>
+
+    <form method="GET" action="/">
+        <input type="text" name="query" placeholder="Enter search query..." value="{{ query }}">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if query %}
+        {% if results|length == 0 %}
+            <div class="no-results">
+                <p>Your search - <strong>{{ query }}</strong> - did not match any documents.</p>
+                <p>Suggestions:</p>
+                <ul>
+                    <li>Make sure that all words are spelled correctly.</li>
+                    <li>Try different keywords.</li>
+                    <li>Try more general keywords.</li>
+                </ul>
+            </div>
+        {% else %}
+            <p style="text-align:center;">Showing results {{ (page-1)*results_per_page + 1 }} – {{ (page-1)*results_per_page + results|length }} of {{ total_results }}</p>
+
+            {% for r in results %}
+                <div class="result">
+                    <div class="title">
+                        <a href="{{ url_for('doc_view', filename=r.filename) }}" target="_blank">{{ r.title }}</a>
+                    </div>
+                    <div class="snippet"><p>{{ r.snippet|safe }}</p></div>
+                    <div class="similarity">Similarity: {{ r.similarity }}</div>
+                </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="?page={{ page-1 }}&query={{ query }}">Previous</a>
+                {% endif %}
+
+                {% set total_pages = ((total_results / results_per_page)|round(0, 'ceil'))|int %}
+                {% for p in range(1, total_pages + 1) %}
+                    <a href="?page={{ p }}&query={{ query }}" class="{% if p == page %}active{% endif %}">{{ p }}</a>
+                {% endfor %}
+
+                {% if page * results_per_page < total_results %}
+                    <a href="?page={{ page+1 }}&query={{ query }}">Next</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
