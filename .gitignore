@@ -1,0 +1,11 @@
+# Ignore virtual environment folder
+nlp-env/
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore system files
+.DS_Store
+Thumbs.db
