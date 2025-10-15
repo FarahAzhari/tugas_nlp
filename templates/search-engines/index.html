@@ -1,178 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Document Search</title>
-    <style>
-        body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            margin: 40px;
-            background: #f4f6f8;
-            color: #333;
-        }
-        h1 {
-            text-align: center;
-            color: #007bff;
-            margin-bottom: 30px;
-        }
-        form {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        input[type="text"] {
-            padding: 10px 12px;
-            width: 400px;
-            border: 1px solid #ccc;
-            border-radius: 4px 0 0 4px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 16px;
-            border: none;
-            background: #007bff;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 0 4px 4px 0;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .result {
-            margin-bottom: 20px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .result:hover {
-            transform: translateY(-2px);
-        }
-        .title a {
-            font-weight: bold;
-            font-size: 20px;
-            color: #007bff;
-            text-decoration: none;
-        }
-        .title a:hover {
-            text-decoration: underline;
-        }
-        .snippet {
-            margin-top: 8px;
-            font-size: 15px;
-            line-height: 1.5;
-        }
-        .similarity {
-            margin-top: 6px;
-            font-size: 13px;
-            color: #666;
-        }
-        .no-results {
-            padding: 25px;
-            background: #fff3f3;
-            border: 1px solid #ffd6d6;
-            border-radius: 8px;
-            text-align: center;
-            color: #d9534f;
-        }
-        .no-results ul {
-            text-align: left;
-            margin: 10px auto 0;
-            display: inline-block;
-        }
-        .pagination {
-            margin-top: 30px;
-            text-align: center;
-        }
-        .pagination a {
-            margin: 0 5px;
-            padding: 8px 14px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            text-decoration: none;
-            color: #333;
-            transition: background 0.3s, color 0.3s;
-        }
-        .pagination a.active {
-            background: #007bff;
-            color: #fff;
-            border-color: #007bff;
-        }
-        .pagination a:hover {
-            background: #e9ecef;
-        }
-        @media (max-width: 500px) {
-            form {
-                flex-direction: column;
-                align-items: center;
-            }
-            input[type="text"] {
-                width: 100%;
-                margin-bottom: 10px;
-                border-radius: 4px;
-            }
-            button {
-                width: 100%;
-                border-radius: 4px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Search Engines</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* NAVBAR */
+    nav {
+      background-color: #222;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+    }
+    nav .brand {
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #ffcc00;
+      text-decoration: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      margin: 0;
+      padding: 0;
+      gap: 1.5rem;
+    }
+    nav ul li {
+      display: inline;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav ul li a.active {
+      color: #ffcc00;
+      text-decoration: underline;
+    }
+
+    /* SEARCH BOX */
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    input[type="text"] {
+      width: 70%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px 0 0 5px;
+      outline: none;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+    }
+
+    .results p {
+      color: #555;
+    }
+
+    .result {
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .result h3 {
+      margin: 0;
+    }
+    .result small {
+      color: #777;
+    }
+  </style>
 </head>
 <body>
-    <h1>
-      <a href="{{ url_for('search') }}" style="text-decoration: none; color: inherit;">
-        Document Search
-      </a>
-    </h1>
+
+  <!-- NAVIGATION -->
+  <nav>
+    <a href="{{ url_for('search') }}" class="brand">AI Search Engines</a>
+    <ul>
+      <li><a href="{{ url_for('search', engine='cosine') }}" class="{% if engine == 'cosine' %}active{% endif %}">Cosine Similarity</a></li>
+      <li><a href="{{ url_for('search', engine='inverted') }}" class="{% if engine == 'inverted' %}active{% endif %}">Inverted Index</a></li>
+      <li><a href="{{ url_for('admin') }}">Admin</a></li>
+    </ul>
+  </nav>
+
+  <!-- SEARCH CONTAINER -->
+  <div class="container">
+    <h1>{{ 'Cosine Similarity Search' if engine == 'cosine' else 'Inverted Index Search' }}</h1>
 
     <form method="GET" action="/">
-        <input type="text" name="query" placeholder="Enter search query..." value="{{ query }}">
-        <button type="submit">Search</button>
+      <input type="hidden" name="engine" value="{{ engine }}">
+      <input type="text" name="query" placeholder="Enter your search query..." value="{{ query or '' }}" />
+      <button type="submit">Search</button>
     </form>
 
-    {% if query %}
-        {% if results|length == 0 %}
-            <div class="no-results">
-                <p>Your search - <strong>{{ query }}</strong> - did not match any documents.</p>
-                <p>Suggestions:</p>
-                <ul>
-                    <li>Make sure that all words are spelled correctly.</li>
-                    <li>Try different keywords.</li>
-                    <li>Try more general keywords.</li>
-                </ul>
-            </div>
-        {% else %}
-            <p style="text-align:center;">Showing results {{ (page-1)*results_per_page + 1 }} – {{ (page-1)*results_per_page + results|length }} of {{ total_results }}</p>
-
-            {% for r in results %}
-                <div class="result">
-                    <div class="title">
-                        <a href="{{ url_for('doc_view', filename=r.filename) }}" target="_blank">{{ r.title }}</a>
-                    </div>
-                    <div class="snippet"><p>{{ r.snippet|safe }}</p></div>
-                    <div class="similarity">Similarity: {{ r.similarity }}</div>
-                </div>
-            {% endfor %}
-
-            <!-- Pagination -->
-            <div class="pagination">
-                {% if page > 1 %}
-                    <a href="?page={{ page-1 }}&query={{ query }}">Previous</a>
-                {% endif %}
-
-                {% set total_pages = ((total_results / results_per_page)|round(0, 'ceil'))|int %}
-                {% for p in range(1, total_pages + 1) %}
-                    <a href="?page={{ p }}&query={{ query }}" class="{% if p == page %}active{% endif %}">{{ p }}</a>
-                {% endfor %}
-
-                {% if page * results_per_page < total_results %}
-                    <a href="?page={{ page+1 }}&query={{ query }}">Next</a>
-                {% endif %}
-            </div>
-        {% endif %}
+    {% if results %}
+      <div class="results">
+        <p><b>{{ results|length }}</b> results found.</p>
+        {% for res in results %}
+          <div class="result">
+            <h3><a target="_blank" rel="noopener noreferrer" href="{{ url_for('doc_view', filename=res.filename) }}">{{ res.title }}</a></h3>
+            <p>{{ res.snippet|safe }}</p>
+            {% if res.similarity %}
+              <small>Similarity: {{ res.similarity }}</small>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% elif query %}
+      <p>No results found for "<b>{{ query }}</b>".</p>
     {% endif %}
+  </div>
 </body>
 </html>

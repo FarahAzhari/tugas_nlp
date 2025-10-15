@@ -5,54 +5,111 @@
   <title>{{ doc.title }}</title>
   <style>
     body {
-      font-family: 'Georgia', serif;
-      margin: 40px auto;
-      max-width: 800px;
-      line-height: 1.7;
-      background-color: #f9f9f9;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      margin: 0;
+      background-color: #f3f4f6;
       color: #202124;
     }
 
+    /* Navbar */
+    nav {
+      background-color: #1a73e8;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 40px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    nav .logo {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+      opacity: 0.9;
+    }
+
+    /* Page Container */
     .container {
       background-color: #fff;
-      padding: 30px 40px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      margin: 50px auto;
+      padding: 40px 50px;
+      max-width: 850px;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     }
 
     h1 {
       color: #1a73e8;
-      font-size: 28px;
-      margin-bottom: 20px;
+      font-size: 30px;
+      margin-bottom: 25px;
       line-height: 1.2;
     }
 
+    .meta {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
     .content {
-      font-size: 16px;
+      font-size: 17px;
+      line-height: 1.8;
       color: #333;
       white-space: pre-wrap; /* preserve line breaks */
     }
 
-    a.back-link {
+    .back-link {
       display: inline-block;
-      margin-bottom: 20px;
+      margin-top: 30px;
       text-decoration: none;
       color: #1a73e8;
-      font-size: 14px;
+      font-weight: 500;
     }
 
-    a.back-link:hover {
+    .back-link:hover {
       text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <a href="{{ url_for('search') }}" class="back-link">&larr; Back to Search</a>
-    <h1>{{ doc.title }}</h1>
-    <div class="content">
-      {{ doc.content }}
+
+  <!-- Navbar -->
+  <nav>
+    <div class="logo">AI Search Engine</div>
+    <div class="nav-links">
+      <a href="{{ url_for('search', engine='cosine') }}">Cosine Similarity</a>
+      <a href="{{ url_for('search', engine='inverted') }}">Inverted Index</a>
+      <a href="{{ url_for('admin') }}">Admin</a>
     </div>
+  </nav>
+
+  <!-- Document Content -->
+  <div class="container">
+    <h1>{{ doc.title }}</h1>
+    {% if doc.metadata %}
+      <div class="meta">{{ doc.metadata }}</div>
+    {% endif %}
+    <div class="content">{{ doc.content }}</div>
+
+    <a href="{{ url_for('search', engine=request.args.get('engine', 'cosine')) }}" class="back-link">&larr; Back to Results</a>
   </div>
+
 </body>
 </html>
