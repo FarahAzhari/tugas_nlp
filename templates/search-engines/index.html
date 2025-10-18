@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -21,12 +22,14 @@
       align-items: center;
       color: white;
     }
+
     nav .brand {
       font-weight: bold;
       font-size: 1.2rem;
       color: #ffcc00;
       text-decoration: none;
     }
+
     nav ul {
       list-style: none;
       display: flex;
@@ -34,36 +37,43 @@
       padding: 0;
       gap: 1.5rem;
     }
+
     nav ul li {
       display: inline;
     }
+
     nav ul li a {
       color: white;
       text-decoration: none;
       font-weight: bold;
     }
+
     nav ul li a.active {
       color: #ffcc00;
       text-decoration: underline;
     }
 
-    /* SEARCH BOX */
+    /* MAIN CONTAINER */
     .container {
       max-width: 900px;
       margin: 2rem auto;
       background: white;
       padding: 2rem;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+
     h1 {
       text-align: center;
     }
+
+    /* SEARCH BAR */
     form {
       display: flex;
       justify-content: center;
       margin-bottom: 2rem;
     }
+
     input[type="text"] {
       width: 70%;
       padding: 10px;
@@ -71,6 +81,7 @@
       border-radius: 5px 0 0 5px;
       outline: none;
     }
+
     button {
       padding: 10px 20px;
       border: none;
@@ -80,6 +91,7 @@
       cursor: pointer;
     }
 
+    /* RESULTS */
     .results p {
       color: #555;
     }
@@ -89,28 +101,221 @@
       padding-bottom: 1rem;
       border-bottom: 1px solid #ddd;
     }
+
     .result h3 {
       margin: 0;
     }
+
     .result small {
       color: #777;
     }
+
+    /* LDA SECTION */
+    .lda-section h2 {
+      text-align: center;
+      color: #007bff;
+    }
+
+    .lda-section h3 {
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .lda-section p {
+      color: #555;
+      margin-bottom: 15px;
+    }
+
+    .lda-section table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    .lda-section th,
+    .lda-section td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .lda-section th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .topic-chip {
+      display: inline-block;
+      padding: 8px 12px;
+      margin: 6px 6px 6px 0;
+      border-radius: 20px;
+      background: #eef6ff;
+      cursor: pointer;
+      transition: .15s;
+    }
+
+    .topic-chip:hover {
+      background: #d7ebff;
+    }
+
+    .topic-chip.active {
+      background: #007bff;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th,
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    th {
+      background: #007bff;
+      color: #fff;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #666;
+      padding: 1rem 0;
+    }
+
+    a.doc-link {
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a.doc-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width:600px) {
+      input[type="text"] {
+        width: 100%;
+        border-radius: 5px;
+      }
+
+      form {
+        flex-direction: column;
+        gap: 0.7rem;
+        align-items: center;
+      }
+
+      button {
+        border-radius: 5px;
+        width: 100%;
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <!-- NAVIGATION -->
   <nav>
     <a href="{{ url_for('search') }}" class="brand">AI Search Engines</a>
     <ul>
-      <li><a href="{{ url_for('search', engine='cosine') }}" class="{% if engine == 'cosine' %}active{% endif %}">Cosine Similarity</a></li>
-      <li><a href="{{ url_for('search', engine='inverted') }}" class="{% if engine == 'inverted' %}active{% endif %}">Inverted Index</a></li>
+      <li><a href="{{ url_for('search', engine='cosine') }}" class="{% if engine == 'cosine' %}active{% endif %}">Cosine
+          Similarity</a></li>
+      <li><a href="{{ url_for('search', engine='inverted') }}"
+          class="{% if engine == 'inverted' %}active{% endif %}">Inverted Index</a></li>
+      <li><a href="{{ url_for('lda_dashboard') }}" class="{% if mode == 'lda' %}active{% endif %}">Topic Modelling
+          (LDA)</a></li>
       <li><a href="{{ url_for('admin') }}">Admin</a></li>
     </ul>
   </nav>
 
-  <!-- SEARCH CONTAINER -->
+  <!-- MAIN CONTENT -->
   <div class="container">
+
+    {% if mode == "lda" %}
+    <!-- LDA MODE -->
+    <h1>Topic Modelling (LDA)</h1>
+
+    {% if topics and topics|length > 0 %}
+    <p class="muted" style="text-align:center">Click a topic to filter the documents below.</p>
+
+    <!-- Topic chips (works with topics as list returned by your perform_lda) -->
+    <div id="topic-chips" style="text-align:center; margin-bottom:16px;">
+      <span class="topic-chip active" data-topic="all" onclick="filterDocs('all')">Show All</span>
+      {% for topic in topics %}
+      <span class="topic-chip" data-topic="{{ topic.topic_id }}" onclick="filterDocs('{{ topic.topic_id }}', this)">
+        <strong>Topic {{ topic.topic_id + 1 }}</strong> — {{ topic.words | join(', ') }}
+      </span>
+      {% endfor %}
+    </div>
+
+    <!-- Document - Dominant Topic Mapping table -->
+    <h3 style="margin-top:8px;">Document — Dominant Topic Mapping</h3>
+    <table id="lda-doc-table" role="table" aria-label="Documents">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Filename</th>
+          <th>Topic</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for doc in doc_topics %}
+        <!-- doc.dominant_topic is zero-based -->
+        <tr data-topic="{{ doc.dominant_topic }}">
+          <td>{{ doc.title }}</td>
+          <td><a class="doc-link" href="{{ url_for('doc_view', filename=doc.filename) }}" target="_blank">{{
+              doc.filename }}</a></td>
+          <td>Topic {{ doc.dominant_topic + 1 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <script>
+      // filterDocs(topicId, clickedChip)
+      // topicId: 'all' or string number (0-based id as returned by perform_lda)
+      function filterDocs(topicId, clickedChip) {
+        // toggle chip active states
+        var chips = document.querySelectorAll('#topic-chips .topic-chip');
+        chips.forEach(function (c) { c.classList.remove('active'); });
+        // if clickedChip provided, mark it active; else mark Show All
+        if (clickedChip) clickedChip.classList.add('active');
+        else document.querySelector('#topic-chips .topic-chip[data-topic="all"]').classList.add('active');
+
+        var rows = document.querySelectorAll('#lda-doc-table tbody tr');
+        rows.forEach(function (r) {
+          if (topicId === 'all') {
+            r.style.display = '';
+          } else {
+            // dataset.topic is string; compare strings
+            if (r.dataset.topic === String(topicId)) r.style.display = '';
+            else r.style.display = 'none';
+          }
+        });
+        // scroll into view for tablets/phones (optional)
+        var table = document.getElementById('lda-doc-table');
+        if (table) table.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      // ensure Show All visible on load (if not already)
+      document.addEventListener('DOMContentLoaded', function () {
+        if (document.querySelector('#topic-chips .topic-chip.active') === null) {
+          var showAll = document.querySelector('#topic-chips .topic-chip[data-topic="all"]');
+          if (showAll) showAll.classList.add('active');
+        }
+      });
+    </script>
+
+    {% else %}
+    <p class="no-data">No topics or documents available for LDA (upload documents first).</p>
+    {% endif %}
+
+    {% else %}
+    <!-- SEARCH SECTION -->
     <h1>{{ 'Cosine Similarity Search' if engine == 'cosine' else 'Inverted Index Search' }}</h1>
 
     <form method="GET" action="/">
@@ -120,21 +325,25 @@
     </form>
 
     {% if results %}
-      <div class="results">
-        <p><b>{{ results|length }}</b> results found.</p>
-        {% for res in results %}
-          <div class="result">
-            <h3><a target="_blank" rel="noopener noreferrer" href="{{ url_for('doc_view', filename=res.filename) }}">{{ res.title }}</a></h3>
-            <p>{{ res.snippet|safe }}</p>
-            {% if res.similarity %}
-              <small>Similarity: {{ res.similarity }}</small>
-            {% endif %}
-          </div>
-        {% endfor %}
+    <div class="results">
+      <p><b>{{ results|length }}</b> results found.</p>
+      {% for res in results %}
+      <div class="result">
+        <h3><a target="_blank" rel="noopener noreferrer" href="{{ url_for('doc_view', filename=res.filename) }}">{{
+            res.title }}</a></h3>
+        <p>{{ res.snippet|safe }}</p>
+        {% if res.similarity %}
+        <small>Similarity: {{ res.similarity }}</small>
+        {% endif %}
       </div>
+      {% endfor %}
+    </div>
     {% elif query %}
-      <p>No results found for "<b>{{ query }}</b>".</p>
+    <p>No results found for "<b>{{ query }}</b>".</p>
+    {% endif %}
     {% endif %}
   </div>
+
 </body>
+
 </html>

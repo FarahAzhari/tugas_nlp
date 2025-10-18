@@ -3,6 +3,7 @@ import re
 import string
 from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
+from topic_modelling_lda import perform_lda
 
 # Import search algorithms
 from cosine_similarity import cosine_search
@@ -155,6 +156,20 @@ def delete_file(filename):
     if os.path.exists(path):
         os.remove(path)
     return redirect(url_for("admin"))
+
+@app.route("/lda")
+def lda_dashboard():
+    docs = load_documents()
+    topics, doc_topics = perform_lda(docs)
+    return render_template(
+        "index.html",
+        mode="lda",
+        topics=topics,
+        doc_topics=doc_topics,
+        engine=None,
+        results=None,
+        query=None
+    )
 
 
 if __name__ == "__main__":
