@@ -1,115 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>{{ doc.title }}</title>
-  <style>
-    body {
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-      margin: 0;
-      background-color: #f3f4f6;
-      color: #202124;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <title>{{ doc.title }}</title>
+    <style>
+      body {
+        font-family: "Inter", "Segoe UI", sans-serif;
+        margin: 0;
+        background-color: #f3f4f6;
+        color: #202124;
+      }
 
-    /* Navbar */
-    nav {
-      background-color: #1a73e8;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 40px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+      /* Navbar */
+      nav {
+        background-color: #1a73e8;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 40px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
 
-    nav .logo {
-      font-size: 20px;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
+      nav .logo {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
 
-    nav .nav-links {
-      display: flex;
-      gap: 20px;
-    }
+      nav .nav-links {
+        display: flex;
+        gap: 20px;
+      }
 
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-      transition: 0.2s;
-    }
+      nav a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.2s;
+      }
 
-    nav a:hover {
-      text-decoration: underline;
-      opacity: 0.9;
-    }
+      nav a:hover {
+        text-decoration: underline;
+        opacity: 0.9;
+      }
 
-    /* Page Container */
-    .container {
-      background-color: #fff;
-      margin: 50px auto;
-      padding: 40px 50px;
-      max-width: 850px;
-      border-radius: 10px;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    }
+      /* Page Container */
+      .container {
+        background-color: #fff;
+        margin: 50px auto;
+        padding: 40px 50px;
+        max-width: 850px;
+        border-radius: 10px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      }
 
-    h1 {
-      color: #1a73e8;
-      font-size: 30px;
-      margin-bottom: 25px;
-      line-height: 1.2;
-    }
+      h1 {
+        color: #1a73e8;
+        font-size: 30px;
+        margin-bottom: 25px;
+        line-height: 1.2;
+      }
 
-    .meta {
-      color: #666;
-      font-size: 14px;
-      margin-bottom: 20px;
-    }
+      .meta {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
 
-    .content {
-      font-size: 17px;
-      line-height: 1.8;
-      color: #333;
-      white-space: pre-wrap; /* preserve line breaks */
-    }
+      .content {
+        font-size: 17px;
+        line-height: 1.8;
+        color: #333;
+        white-space: pre-wrap; /* preserve line breaks */
+      }
 
-    .back-link {
-      display: inline-block;
-      margin-top: 30px;
-      text-decoration: none;
-      color: #1a73e8;
-      font-weight: 500;
-    }
+      .back-link {
+        display: inline-block;
+        margin-top: 30px;
+        text-decoration: none;
+        color: #1a73e8;
+        font-weight: 500;
+      }
 
-    .back-link:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
+      .back-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar -->
+    <nav>
+      <div class="logo">AI Search Engine</div>
+      <div class="nav-links">
+        <a href="{{ url_for('search', engine='cosine') }}">Cosine Similarity</a>
+        <a href="{{ url_for('search', engine='inverted') }}">Inverted Index</a>
+        <a href="{{ url_for('word_vector_dashboard') }}">Word Vectors</a>
+        <a href="{{ url_for('admin') }}">Admin</a>
+      </div>
+    </nav>
 
-  <!-- Navbar -->
-  <nav>
-    <div class="logo">AI Search Engine</div>
-    <div class="nav-links">
-      <a href="{{ url_for('search', engine='cosine') }}">Cosine Similarity</a>
-      <a href="{{ url_for('search', engine='inverted') }}">Inverted Index</a>
-      <a href="{{ url_for('admin') }}">Admin</a>
-    </div>
-  </nav>
-
-  <!-- Document Content -->
-  <div class="container">
-    <h1>{{ doc.title }}</h1>
-    {% if doc.metadata %}
+    <!-- Document Content -->
+    <div class="container">
+      <h1>{{ doc.title }}</h1>
+      {% if doc.metadata %}
       <div class="meta">{{ doc.metadata }}</div>
-    {% endif %}
-    <div class="content">{{ doc.content }}</div>
+      {% endif %}
+      <div class="content">{{ doc.content }}</div>
 
-    <a href="{{ url_for('search', engine=request.args.get('engine', 'cosine')) }}" class="back-link">&larr; Back to Results</a>
-  </div>
-
-</body>
+      <a
+        href="{{ url_for('search', engine=request.args.get('engine', 'cosine')) }}"
+        class="back-link"
+        >&larr; Back to Results</a
+      >
+    </div>
+  </body>
 </html>

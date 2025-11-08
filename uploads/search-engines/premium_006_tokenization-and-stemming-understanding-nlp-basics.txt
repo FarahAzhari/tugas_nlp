@@ -1,0 +1,9 @@
+Tokenization and Stemming: Understanding NLP Basics
+
+Natural Language Processing (NLP) involves transforming raw text for machine understanding. Two fundamental techniques, tokenization and stemming, are often confused but serve distinct purposes.
+
+**Tokenization** is the initial and crucial step of breaking down text into smaller, meaningful units called tokens. These can be words, subwords, characters, or punctuation. Its primary goal is to segment continuous text into discrete elements for individual processing. For example, "The dogs are running." becomes ["The", "dogs", "are", "running", "."]. This process is essential because most NLP tasks operate on these individual tokens, not raw text, providing the groundwork for all subsequent linguistic analysis.
+
+**Stemming**, conversely, reduces inflected words to their base or root form, known as a "stem." The objective is to normalize word variations so different forms are treated as a single concept. For instance, "running," "runs," "ran," and "runner" might all stem to "run." Stemmers typically apply heuristic rules to chop off suffixes, not always ensuring a linguistically valid word. This rule-based approach is fast but can lead to over-stemming or under-stemming, often producing non-dictionary words. Its main benefit lies in reducing vocabulary size and improving information retrieval by matching varied word forms.
+
+The key difference lies in their function. Tokenization is about **segmentation**: dividing text into its constituent parts. It's a foundational step, a prerequisite for most NLP operations. Stemming, conversely, is about **normalization**: reducing words to a common morphological root. It typically operates on the tokens produced by tokenization. While tokenization prepares text by creating discrete units, stemming aims to abstract away grammatical variations to consolidate word meanings, particularly useful for semantic similarity tasks.

@@ -1,4 +1,0 @@
-What is Artificial Intelligence?
-Artificial Intelligence (AI) refers to the creation of computer systems capable of performing tasks that normally require human intelligence. These tasks include learning, reasoning, problem-solving, and understanding language. AI systems can be designed to mimic human thought processes or analyze large amounts of data to find patterns.
-
-AI is a broad field that includes subfields like machine learning, natural language processing, and robotics. The goal of AI research is to build machines that can perform complex tasks autonomously and improve over time without human intervention.
