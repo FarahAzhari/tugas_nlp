@@ -196,6 +196,45 @@
         text-decoration: underline;
       }
 
+      /* Styling untuk tabel hasil word vector */
+      .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+
+      .results-table th,
+      .results-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+
+      .results-table th {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .results-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      /* Progress bar untuk visualisasi similarity */
+      .progress-bar {
+        width: 100%;
+        height: 12px;
+        background-color: #e0e0e0;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-top: 5px;
+      }
+
+      .progress-bar div {
+        height: 100%;
+        background-color: #007bff;
+        border-radius: 6px;
+      }
+
       @media (max-width: 600px) {
         input[type="text"] {
           width: 100%;
@@ -213,45 +252,10 @@
           width: 100%;
         }
       }
-      /* Styling untuk tabel hasil word vector */
-      .results-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 1rem;
-      }
-      .results-table th,
-      .results-table td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #ddd;
-        text-align: left;
-      }
-      .results-table th {
-        background-color: #007bff;
-        color: white;
-      }
-      .results-table tr:nth-child(even) {
-        background-color: #f9f9f9;
-      }
-
-      /* Progress bar untuk visualisasi similarity */
-      .progress-bar {
-        width: 100%;
-        height: 12px;
-        background-color: #e0e0e0;
-        border-radius: 6px;
-        overflow: hidden;
-        margin-top: 5px;
-      }
-      .progress-bar div {
-        height: 100%;
-        background-color: #007bff;
-        border-radius: 6px;
-      }
     </style>
   </head>
 
   <body>
-    <!-- NAVIGATION -->
     <nav>
       <a href="{{ url_for('search') }}" class="brand">AI Search Engines</a>
       <ul>
@@ -283,14 +287,21 @@
             >Word Vectors</a
           >
         </li>
+
+        <li>
+          <a
+            href="{{ url_for('translator_dashboard') }}"
+            class="{% if mode == 'translator' %}active{% endif %}"
+            >Seq2Seq Translator</a
+          >
+        </li>
+
         <li><a href="{{ url_for('admin') }}">Admin</a></li>
       </ul>
     </nav>
 
-    <!-- MAIN CONTENT -->
     <div class="container">
       {% if mode == "lda" %}
-      <!-- LDA MODE -->
       <h1>Topic Modelling (LDA)</h1>
 
       {% if topics and topics|length > 0 %}
@@ -298,7 +309,6 @@
         Click a topic to filter the documents below.
       </p>
 
-      <!-- Topic chips (works with topics as list returned by your perform_lda) -->
       <div id="topic-chips" style="text-align: center; margin-bottom: 16px">
         <span
           class="topic-chip active"
@@ -318,7 +328,6 @@
         {% endfor %}
       </div>
 
-      <!-- Document - Dominant Topic Mapping table -->
       <h3 style="margin-top: 8px">Document — Dominant Topic Mapping</h3>
       <table id="lda-doc-table" role="table" aria-label="Documents">
         <thead>
@@ -330,7 +339,6 @@
         </thead>
         <tbody>
           {% for doc in doc_topics %}
-          <!-- doc.dominant_topic is zero-based -->
           <tr data-topic="{{ doc.dominant_topic }}">
             <td>{{ doc.title }}</td>
             <td>
@@ -348,15 +356,11 @@
       </table>
 
       <script>
-        // filterDocs(topicId, clickedChip)
-        // topicId: 'all' or string number (0-based id as returned by perform_lda)
         function filterDocs(topicId, clickedChip) {
-          // toggle chip active states
           var chips = document.querySelectorAll("#topic-chips .topic-chip");
           chips.forEach(function (c) {
             c.classList.remove("active");
           });
-          // if clickedChip provided, mark it active; else mark Show All
           if (clickedChip) clickedChip.classList.add("active");
           else
             document
@@ -368,17 +372,14 @@
             if (topicId === "all") {
               r.style.display = "";
             } else {
-              // dataset.topic is string; compare strings
               if (r.dataset.topic === String(topicId)) r.style.display = "";
               else r.style.display = "none";
             }
           });
-          // scroll into view for tablets/phones (optional)
           var table = document.getElementById("lda-doc-table");
           if (table)
             table.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-        // ensure Show All visible on load (if not already)
         document.addEventListener("DOMContentLoaded", function () {
           if (
             document.querySelector("#topic-chips .topic-chip.active") === null
@@ -480,8 +481,103 @@
       <p class="no-data">
         Masukkan kata di atas untuk melihat kata-kata terdekatnya.
       </p>
-      {% endif %} {% else %}
-      <!-- SEARCH SECTION -->
+      {% endif %} {% elif mode == "translator" %}
+      <h1>Simple Seq2Seq Translator</h1>
+      <p style="text-align: center; color: #666; margin-bottom: 2rem">
+        Penerjemah sederhana menggunakan PyTorch & LSTM.<br />
+        <span style="color: red; font-size: 0.9em">
+          *Hanya mengenali kalimat yang ada di training data (English &rarr;
+          Indonesia).
+        </span>
+        <span
+          >"how are you today", "what is your name", "good morning", "i love
+          ai", "hello world", "thank you", "see you later", "artificial
+          intelligence", "machine learning is cool"</span
+        >
+      </p>
+
+      <div
+        style="
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <form method="POST" action="{{ url_for('translator_dashboard') }}">
+          <div
+            style="text-align: center; margin-bottom: 15px; font-weight: bold"
+          >
+            English &rarr; Indonesia
+          </div>
+
+          <div style="display: flex; gap: 20px; flex-wrap: wrap">
+            <div style="flex: 1; min-width: 300px">
+              <label style="font-weight: bold; color: #555">Input Text:</label>
+              <textarea
+                name="text"
+                rows="8"
+                placeholder="Enter text here... (e.g., 'good morning')"
+                style="
+                  width: 100%;
+                  padding: 10px;
+                  border: 1px solid #ccc;
+                  border-radius: 5px;
+                  margin-top: 5px;
+                  font-family: sans-serif;
+                  resize: vertical;
+                "
+                required
+              >
+{{ original_text }}</textarea
+              >
+            </div>
+
+            <div style="flex: 1; min-width: 300px">
+              <label style="font-weight: bold; color: #007bff"
+                >Translation Result:</label
+              >
+              <div
+                style="
+                  width: 100%;
+                  height: 192px;
+                  padding: 10px;
+                  border: 1px solid #007bff;
+                  background-color: #f0f7ff;
+                  border-radius: 5px;
+                  margin-top: 5px;
+                  overflow-y: auto;
+                "
+              >
+                {% if translation %} {{ translation }} {% else %}
+                <span style="color: #aaa; font-style: italic"
+                  >Translation will appear here...</span
+                >
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 20px">
+            <button
+              type="submit"
+              style="
+                background-color: #28a745;
+                color: white;
+                padding: 12px 30px;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+              "
+            >
+              Translate
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {% else %}
       <h1>
         {{ 'Cosine Similarity Search' if engine == 'cosine' else 'Inverted Index
         Search' }}

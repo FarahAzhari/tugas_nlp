@@ -16,6 +16,10 @@ from word_vectors import load_word_vector_model, train_and_save_model, get_simil
 from cosine_similarity import cosine_search
 from inverted_index import inverted_search
 
+# Translator
+# Seq2Seq
+from simple_seq2seq import simple_translate
+
 # AI Generator
 from ai_corpus_generator import generate_and_save_files
 from premium_corpus_generator import generate_and_save_premium_files
@@ -304,6 +308,29 @@ def train_model_route():
     
     # Redirect kembali ke halaman word vector setelah training
     return redirect(url_for("word_vector_dashboard"))
+
+@app.route("/translator", methods=["GET", "POST"])
+def translator_dashboard():
+    translation = ""
+    original_text = ""
+    # Ubah 'fr' menjadi 'id' (Indonesia)
+    source_lang = "en" 
+    target_lang = "id" 
+
+    if request.method == "POST":
+        original_text = request.form.get("text", "")
+        if original_text:
+            translation = simple_translate(original_text)
+
+    return render_template(
+        "index.html",
+        mode="translator", 
+        translation=translation,
+        original_text=original_text,
+        source_lang=source_lang,
+        target_lang=target_lang,
+        query="", results=[], engine=None 
+    )
 
 
 if __name__ == "__main__":
